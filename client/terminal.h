@@ -1,7 +1,6 @@
 #ifndef TERMINAL_H
 #define TERMINAL_H
 #include <iostream>
-#include <windows.h>
 #include <string>
 #include <direct.h>
 #include "../lib/dirent.h"
@@ -12,12 +11,14 @@
 class Terminal {
 public:
 	// functions
+	Terminal();
 	Terminal(SOCKET);
 	void run();
 	bool process(const char *);
 	void quit();
 	void listLocal();
 	void showHelp();
+	void listRemote();
 
 	// variables
 	char directory[FILENAME_MAX];

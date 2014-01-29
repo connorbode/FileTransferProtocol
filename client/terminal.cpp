@@ -2,6 +2,8 @@
 
 using namespace std;
 
+Terminal::Terminal() {};
+
 Terminal::Terminal(SOCKET s) {
 	transfer = Transfer(s);
 }
@@ -140,3 +142,8 @@ void Terminal::showHelp() {
 /**
  * Lists remote files
  */
+void Terminal::listRemote() {
+
+	// Send the list command to the server
+	transfer.sendMessage("list");
+}
