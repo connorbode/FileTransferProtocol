@@ -2,6 +2,8 @@
 
 using namespace std;
 
+Server::Server() {};
+
 Server::Server(SOCKET s) {
 	
 	transfer = Transfer(s);

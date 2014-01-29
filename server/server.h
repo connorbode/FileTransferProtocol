@@ -7,6 +7,7 @@ class Server {
 
 public:
 	// methods
+	Server();
 	Server(SOCKET);
 	void run();
 
