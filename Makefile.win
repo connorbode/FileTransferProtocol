@@ -1,0 +1,34 @@
+# Project: Project2
+# Makefile created by Dev-C++ 5.5.3
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+OBJ      = cli_tcp.o ser_tcp.o Thread.o
+LINKOBJ  = cli_tcp.o ser_tcp.o Thread.o
+LIBS     = -L"E:/WinPrograms/Dev-Cpp/MinGW32/lib" -L"E:/WinPrograms/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc
+INCS     = -I"E:/WinPrograms/Dev-Cpp/MinGW32/include"
+CXXINCS  = -I"E:/WinPrograms/Dev-Cpp/MinGW32/include" -I"E:/WinPrograms/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.7.2/include/c++"
+BIN      = Project2.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
+RM       = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+cli_tcp.o: cli_tcp.cpp
+	$(CPP) -c cli_tcp.cpp -o cli_tcp.o $(CXXFLAGS)
+
+ser_tcp.o: ser_tcp.cpp
+	$(CPP) -c ser_tcp.cpp -o ser_tcp.o $(CXXFLAGS)
+
+Thread.o: Thread.cpp
+	$(CPP) -c Thread.cpp -o Thread.o $(CXXFLAGS)
