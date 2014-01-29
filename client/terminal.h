@@ -6,12 +6,13 @@
 #include <direct.h>
 #include "../lib/dirent.h"
 #include <sys/stat.h>
+#include "../transfer.h"
 
 
 class Terminal {
 public:
 	// functions
-	Terminal();
+	Terminal(SOCKET);
 	void run();
 	bool process(const char *);
 	void quit();
@@ -22,6 +23,7 @@ public:
 	char directory[FILENAME_MAX];
 	DIR *dir;
 	struct dirent *dirEntry;
+	Transfer transfer;
 };
 
 #endif

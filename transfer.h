@@ -12,7 +12,6 @@ public:
 	int ibytessent;
 	int ibytesrecv;
 
-	//Transfer(SOCKET&);
 	Transfer::Transfer();
 	Transfer::Transfer(SOCKET);
 	bool sendMessage(char*);

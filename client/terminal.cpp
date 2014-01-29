@@ -2,7 +2,8 @@
 
 using namespace std;
 
-Terminal::Terminal() {
+Terminal::Terminal(SOCKET s) {
+	transfer = Transfer(s);
 }
 
 /**
@@ -48,27 +49,19 @@ void Terminal::run() {
 bool Terminal::process(const char * input) {
 	
 	// If the user wants to quit
-	if(strcmp(input, "quit") == 0) {
-
-		quit();
-	}
-
-	// If the user wants to list local resources
-	else if(strcmp(input, "list_local") == 0) {
-
-		listLocal();
-	}
+	if(strcmp(input, "quit") == 0) { quit(); }
 
 	// If the user needs help
-	else if(strcmp(input, "help") == 0) {
+	else if(strcmp(input, "help") == 0) { showHelp(); }
 
-		showHelp();
-	}
+	// If the user wants to list local resources
+	else if(strcmp(input, "list_local") == 0) { listLocal(); }
+
+	// If the user wants to list remote resources
+	else if(strcmp(input, "list_remote") == 0) {listRemote(); }
 
 	// If the input is not understood
-	else
-		return false;
-
+	else return false;
 }
 
 /**
@@ -142,3 +135,8 @@ void Terminal::showHelp() {
 	cout << " quit - quit the application \n\r";
 	cout << " list_local - list files in the local directory \n\r";
 }
+
+
+/**
+ * Lists remote files
+ */
