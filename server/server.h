@@ -1,7 +1,8 @@
-#ifndef SERVER
-#define SERVER
+#ifndef SERVER_H
+#define SERVER_H
 
-#include "../transfer.h";
+#include "../transfer.h"
+#include <iostream>
 
 class Server {
 
@@ -13,6 +14,6 @@ public:
 
 	// variables
 	Transfer transfer;
-}
+};
 
 #endif
