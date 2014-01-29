@@ -32,7 +32,7 @@ void Terminal::run() {
 
 		// Process input
 		if( ! process(input) ) {
-			cout << "input not understood! \n\r";
+			cout << "input not understood!  type 'help' for instructions :) \n\r";
 		}
 		
 		cout << "\n\r";
@@ -50,63 +50,95 @@ bool Terminal::process(const char * input) {
 	// If the user wants to quit
 	if(strcmp(input, "quit") == 0) {
 
-		// Say bye :)
-		cout << "Bye!";
-		Sleep(1000);
-
-		// Exit program
-		exit(0);
+		quit();
 	}
 
 	// If the user wants to list local resources
-	else if(strcmp(input, "list") == 0) {
+	else if(strcmp(input, "list_local") == 0) {
 
-		// Print initial message
-		cout << "Files in directory \"" << directory << "\": \n\r";
+		listLocal();
+	}
 
-		// Open directory
-		if ((dir = opendir(directory)) != NULL) {
-		  
-		  // Iterate through the directory
-		  while ((dirEntry = readdir(dir)) != NULL) {
+	// If the user needs help
+	else if(strcmp(input, "help") == 0) {
 
-			  struct stat st;
-
-			  // Check if entry is a file or folder
-			  stat(dirEntry->d_name, &st);
-			  
-			  // If it is a folder
-			  if(S_ISDIR(st.st_mode)) {
-
-				  // Do nothing.
-			  }
-
-			  // If it is a file
-			  else {
-
-				  // Print the name
-				  cout << "- " << dirEntry->d_name << "\n\r";
-			  }
-		  }
-		  closedir (dir);
-		} 
-		
-		// Failed to open directory
-		else {
-		  
-		  // say bye and quit!
-		  cout << "Failed to open directory :( \n\r Quitting..";
-		  Sleep(1000);
-		  exit(0);
-		}
-
-		cout << "\n\r";
-		
-		return true;
+		showHelp();
 	}
 
 	// If the input is not understood
 	else
 		return false;
 
+}
+
+/**
+ * Quits the application
+ */
+void Terminal::quit() {
+
+	// Say bye :)
+	cout << "Bye!";
+	Sleep(1000);
+
+	// Exit program
+	exit(0);
+}
+
+/**
+ * Lists local files
+ */
+void Terminal::listLocal() {
+
+	// Print initial message
+	cout << "Files in directory \"" << directory << "\": \n\r";
+
+	// Open directory
+	if ((dir = opendir(directory)) != NULL) {
+		  
+		// Iterate through the directory
+		while ((dirEntry = readdir(dir)) != NULL) {
+
+			struct stat st;
+
+			// Check if entry is a file or folder
+			stat(dirEntry->d_name, &st);
+			  
+			// If it is a folder
+			if(S_ISDIR(st.st_mode)) {
+
+				// Do nothing.
+			}
+
+			// If it is a file
+			else {
+
+				// Print the name
+				cout << "- " << dirEntry->d_name << "\n\r";
+			}
+		}
+
+		closedir (dir);
+	} 
+		
+	// Failed to open directory
+	else {
+		  
+		// say bye and quit!
+		cout << "Failed to open directory :( \n\r Quitting..";
+		Sleep(1000);
+		exit(0);
+	}
+
+	cout << "\n\r";
+}
+
+
+/**
+ * Display help to the user
+ */
+void Terminal::showHelp() {
+
+	cout << "Operations: \n\r";
+	cout << " quit - quit the application \n\r";
+	cout << " list_local - list files in the local directory \n\r";
 }

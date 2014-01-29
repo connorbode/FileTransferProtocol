@@ -14,6 +14,9 @@ public:
 	Terminal();
 	void run();
 	bool process(const char *);
+	void quit();
+	void listLocal();
+	void showHelp();
 
 	// variables
 	char directory[FILENAME_MAX];
