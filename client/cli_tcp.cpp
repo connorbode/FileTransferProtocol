@@ -23,6 +23,7 @@ char* getmessage(char *);
 #include <conio.h>
 #include <windows.h>
 #include "../transfer.h"
+#include "terminal.h"
 
 
 
@@ -69,6 +70,7 @@ HANDLE test;
 DWORD dwtest;
 
 Transfer transfer;
+Terminal terminal;
 
 
 
@@ -160,6 +162,14 @@ int main(void){
 		if (connect(s,(LPSOCKADDR)&sa_in,sizeof(sa_in)) == SOCKET_ERROR)
 			throw "connect failed\n";
 
+		/* CONNECTION ESTABLISHED */
+
+		/* ALL CODE PRIOR TO THIS LINE WAS NOT MINE */
+
+		/* MODIFIED CODE */
+
+		terminal.run();
+
 		transfer = Transfer(s);
 
 		transfer.sendMessage("test");
@@ -195,6 +205,11 @@ int main(void){
 		//	throw "Receive failed\n";
 		//else
 		//	cout << szbuffer;
+
+		/* END MODIFIED CODE */
+
+		/* ALL CODE AFTER THIS LINE IS NOT MINE */
+
 	} // try loop
 
 	//Display any needed error response.

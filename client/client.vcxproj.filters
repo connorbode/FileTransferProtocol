@@ -21,9 +21,15 @@
     <ClCompile Include="..\transfer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="terminal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\transfer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="terminal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

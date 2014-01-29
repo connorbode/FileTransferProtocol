@@ -78,9 +78,11 @@
   <ItemGroup>
     <ClCompile Include="..\transfer.cpp" />
     <ClCompile Include="cli_tcp.cpp" />
+    <ClCompile Include="terminal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\transfer.h" />
+    <ClInclude Include="terminal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
