@@ -81,6 +81,7 @@
     <ClCompile Include="Thread.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\lib\dirent.h" />
     <ClInclude Include="..\transfer.h" />
     <ClInclude Include="Thread.h" />
   </ItemGroup>
