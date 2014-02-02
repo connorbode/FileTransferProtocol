@@ -144,6 +144,29 @@ void Terminal::showHelp() {
  */
 void Terminal::listRemote() {
 
+	cout << "Files on remote server: \n\r";
+
 	// Send the list command to the server
 	transfer.sendMessage("list");
+
+	// Receive input
+	while(true) {
+
+		// Get the input
+
+		cout << "received message \n\r\n\r";
+
+		char message[128];
+		strcpy(message, transfer.receiveMessage());
+
+		// Check if the message is done
+		if(strcmp(message, "done") == 0) {
+			
+			break;
+		}
+
+		// Print the file name
+		cout << "- " << message;
+		cout << "\n\r";
+	}
 }

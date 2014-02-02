@@ -11,15 +11,14 @@ Transfer::Transfer(SOCKET s) {
 }
 
 bool Transfer::sendMessage(char* message) {
+
 	memset(&szbuffer,0,sizeof(szbuffer));
-	sprintf(szbuffer, message); 
+	sprintf(szbuffer, message);
 	ibytessent=0;
 	ibufferlen = strlen(message);
-	ibytessent = send(s,szbuffer,ibufferlen,0);
+	ibytessent = send(this->s,szbuffer,ibufferlen,0);
 	if (ibytessent == SOCKET_ERROR)
-		throw "Send failed\n";  
-	else
-		cout << "Message to server: " << szbuffer;
+		throw "Send failed\n";
 }
 
 char* Transfer::receiveMessage() {

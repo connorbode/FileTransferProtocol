@@ -6,12 +6,14 @@
 
 class Transfer {
 public:
+	// variables
 	SOCKET s;
 	int ibufferlen;
 	char szbuffer[128];
 	int ibytessent;
 	int ibytesrecv;
 
+	// 
 	Transfer::Transfer();
 	Transfer::Transfer(SOCKET);
 	bool sendMessage(char*);

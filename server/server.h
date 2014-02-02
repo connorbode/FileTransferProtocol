@@ -3,6 +3,10 @@
 
 #include "../transfer.h"
 #include <iostream>
+#include "../lib/dirent.h"
+#include <sys/stat.h>
+#include <direct.h>
+#include <vector>
 
 class Server {
 
@@ -11,9 +15,13 @@ public:
 	Server();
 	Server(SOCKET);
 	void run();
+	void list();
 
 	// variables
 	Transfer transfer;
+	char directory[FILENAME_MAX];
+	DIR *dir;
+	struct dirent *dirEntry;
 };
 
 #endif

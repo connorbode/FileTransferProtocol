@@ -15,6 +15,8 @@
 #include <iostream>
 #include <windows.h>
 #include "../transfer.h"
+#include "server.h"
+#include <conio.h>
 
 
 
@@ -32,6 +34,9 @@ SOCKET s;
 SOCKET s1;
 SOCKADDR_IN sa;      // filled by bind
 SOCKADDR_IN sa1;     // fill with server info, IP, port
+
+Server servz;
+
 union {struct sockaddr generic;
 	struct sockaddr_in ca_in;}ca;
 
@@ -63,8 +68,6 @@ union {struct sockaddr generic;
 	HANDLE test;
 
 	DWORD dwtest;
-
-	Transfer transfer;
 
 	//reference for used structures
 
@@ -171,9 +174,22 @@ union {struct sockaddr generic;
 
 				// Create transfer object.. 
 				//transfer = Transfer(s1);
-				transfer = Transfer(s1);
 
-				cout << transfer.receiveMessage();
+
+
+
+
+
+				/** MY CODE **/
+				servz = Server(s1);
+				servz.run();
+
+				/** END MY CODE **/
+
+
+
+
+
 
 
 				//Fill in szbuffer from accepted request.

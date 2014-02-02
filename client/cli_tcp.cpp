@@ -168,13 +168,8 @@ int main(void){
 
 		/* MODIFIED CODE */
 
+		terminal = Terminal(s);
 		terminal.run();
-
-		transfer = Transfer(s);
-
-		transfer.sendMessage("test");
-
-		transfer.sendMessage("test2");
 
 		/* Have an open connection, so, server is 
 
