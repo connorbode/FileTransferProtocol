@@ -13,6 +13,9 @@ Terminal::Terminal(SOCKET s) {
  */
 void Terminal::run() {
 
+	cout << "WAITING FOR MESSAGE \n\r";
+	cout << transfer.receiveMessage();
+
 	// Set current directory
 	if( ! _getcwd(directory, sizeof(directory)) ) {
 		
@@ -153,7 +156,6 @@ void Terminal::listRemote() {
 	while(true) {
 
 		// Get the input
-
 		cout << "received message \n\r\n\r";
 
 		char message[128];
