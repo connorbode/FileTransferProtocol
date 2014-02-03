@@ -105,6 +105,65 @@ void Server::list() {
  */
 void Server::put(string request) {
 
+	cout << "\nPUT Request\n";
+
 	// Decode request
+	int numPackets, lastPacketSize;
+	string filename;
+
+	// Find any occurrences of ; and extract the string
+	string delimiter = ";";
+	size_t pos = 0, pos2 = 0;
+	string token, param, value;
+	while((pos = request.find(delimiter)) != string::npos) {
+		token = request.substr(0, pos);
+
+		// Ignore put 
+		if(token.compare("put") != 0) {
+
+			// Divide at :
+			pos2 = request.find(":");
+			param = request.substr(0, pos2);
+			value = request.substr(pos2+1, token.size()-pos2-1);
+
+			// If numPackets
+			if(param.compare("num_packets") == 0) {
+				numPackets = atoi(value.c_str());
+				printf("Number of packets: %ld. \n", numPackets);
+			}
+
+			// If lastPacketSize
+			else if(param.compare("last_packet_size") == 0) { 
+				lastPacketSize = atoi(value.c_str());
+				printf("Last packet size: %ld. \n", lastPacketSize);
+			}
+
+			// If filename
+			else if(param.compare("filename") == 0) {
+				filename = value;
+				cout << filename << "\n";
+			}
+		}
+
+		request.erase(0, pos + 1);
+	}
+
+	// Establish connection to file
+	FILE *stream;
+	if((stream = fopen(filename.c_str(), "wb")) != NULL) {
+
+		// Receive file
+		transfer.receiveFile(stream, numPackets, lastPacketSize);
+
+		// Close the stream
+		fclose(stream);
+	}
+
+	// If we couldn't create file
+	else {
+
+		cout << "Couldn't create file\n\n";
+	}
+	
 	
 }

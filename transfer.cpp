@@ -36,11 +36,11 @@ char* Transfer::receiveMessage() {
 	return szbuffer;
 }
 
-bool Transfer::sendFile(FILE *stream) {
+bool Transfer::sendFile(FILE *stream, string filename) {
 
 	// Get the filesize
 	long fileSize;
-	fseek (stream, 0, SEEK_END);   // non-portable
+	fseek (stream, 0, SEEK_END);
     fileSize=ftell (stream);
     printf ("Size of myfile.txt: %ld bytes.\n", fileSize);
 
@@ -62,15 +62,103 @@ bool Transfer::sendFile(FILE *stream) {
 	strcat(header, numPacketsChar);
 	strcat(header, ";last_packet_size:");
 	strcat(header, lastPacketSizeChar);
+	strcat(header, ";filename:");
+	strcat(header, filename.c_str());
 	strcat(header, ";");
 	cout << "Header: " << header << "\n";
 
 	// Send header
 	sendMessage(header);
 
+	// Wait for response
+	char response[128];
+	strcpy(response, receiveMessage());
+
+	// if the response is not "ok", exit
+	if(strcmp(response, "ok") != 0) {
+		cout << "something went wrong... quitting...";
+		exit(0);
+	}
+
+	// Read file to memory
+	long size;
+	size_t result;
+	fseek(stream, 0, SEEK_END);
+	size = ftell(stream);
+	rewind(stream);
+	char *fileBuffer = new char[size];
+	result = fread(fileBuffer, 1, size, stream);
+	printf("Read %ld bytes to memory", result);
+
+	// Send packets
+	for(int i = 0; i < numPackets; i++) {
+
+		// set packet size
+		int packetSize = PACKET_SIZE;
+		if(i == numPackets - 1) packetSize = lastPacketSize;
+
+		// Clear buffer
+		memset(&szbuffer,0,sizeof(szbuffer));
+
+		// Get the current position in the file
+		memcpy(szbuffer, &fileBuffer[i * PACKET_SIZE], PACKET_SIZE);
+
+		// Read from fi
+
+		ibytessent=0;
+		ibytessent = send(s,szbuffer, packetSize,0);
+		if (ibytessent == SOCKET_ERROR)
+			throw "Send failed\n";
+		else {
+			//cout << "\n\r";
+			//cout << "Sending packet " << i << ", size " << packetSize << ", bytes sent " << ibytessent;
+		}
+	}
+
+
+
 
 	return true;
 }
+
+
+void Transfer::receiveFile(FILE *stream, int numPackets, int lastPacketSize) {
+
+	// Send OK
+	sendMessage("ok");
+
+	// Calculate total size
+	int filesize = ((numPackets - 1) * PACKET_SIZE) + lastPacketSize;
+	char *fileBuffer = new char[filesize];
+
+	// Receive packets
+	for(int i = 0; i < numPackets; i++) {
+
+		// Set packet size
+		int packetSize = PACKET_SIZE;
+		if(i == numPackets - 1) packetSize = lastPacketSize;
+
+		// Reset buffer
+		memset(&szbuffer,0,sizeof(szbuffer));
+
+		// Receive packet to buffer
+		if((ibytesrecv = recv(s,szbuffer, packetSize,0)) == SOCKET_ERROR)
+			throw "Receive error in server program\n";
+
+		// Print received packet
+		printf("Received packet %ld, expected size %ld, bytes received %ld\n", i, packetSize, ibytesrecv);
+
+		// Copy to file buffer
+		memcpy(&fileBuffer[i * PACKET_SIZE], szbuffer, packetSize);
+
+	}
+
+	// Empty buffer to file stream
+	int byteswritten = fwrite(fileBuffer, 1, filesize, stream);
+
+	printf("Wrote %ld bytes \n", byteswritten);
+}
+
 
 bool Transfer::sendMessage2(char* message) {
 

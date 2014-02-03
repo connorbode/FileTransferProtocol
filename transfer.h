@@ -23,7 +23,8 @@ public:
 	Transfer::Transfer(SOCKET);
 	bool sendMessage(char*);
 	bool sendMessage2(char*);
-	bool sendFile(FILE*);
+	bool sendFile(FILE*, std::string);
+	void receiveFile(FILE*, int, int);
 	char* receiveMessage();
 	char* receiveMessage2();
 };

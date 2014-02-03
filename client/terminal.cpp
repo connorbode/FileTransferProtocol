@@ -198,12 +198,12 @@ void Terminal::putFile() {
 	cin >> fileName;
 
 	// If we can open the file
-	if((stream = fopen(fileName, "r+b")) != NULL) {
+	if((stream = fopen(fileName, "rb")) != NULL) {
 		
 		cout << "file opened\n";
 
 		// Send the file
-		transfer.sendFile(stream);
+		transfer.sendFile(stream, fileName);
 
 		// Close the filestream
 		fclose(stream);
