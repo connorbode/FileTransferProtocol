@@ -8,6 +8,8 @@
 #include <direct.h>
 #include <vector>
 #include <conio.h>
+#include <sstream>
+#include <string>
 
 class Server {
 
@@ -17,6 +19,7 @@ public:
 	Server(SOCKET);
 	void run();
 	void list();
+	void put(std::string);
 
 	// variables
 	Transfer transfer;

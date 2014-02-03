@@ -6,6 +6,7 @@
 #include "../lib/dirent.h"
 #include <sys/stat.h>
 #include "../transfer.h"
+#include <sstream>
 
 
 class Terminal {
@@ -19,6 +20,7 @@ public:
 	void listLocal();
 	void showHelp();
 	void listRemote();
+	void putFile();
 
 	// variables
 	char directory[FILENAME_MAX];

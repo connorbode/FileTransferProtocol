@@ -22,7 +22,10 @@ public:
 	Transfer::Transfer();
 	Transfer::Transfer(SOCKET);
 	bool sendMessage(char*);
+	bool sendMessage2(char*);
+	bool sendFile(FILE*);
 	char* receiveMessage();
+	char* receiveMessage2();
 };
 
 #endif

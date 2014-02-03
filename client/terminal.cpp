@@ -13,9 +13,6 @@ Terminal::Terminal(SOCKET s) {
  */
 void Terminal::run() {
 
-	cout << "WAITING FOR MESSAGE \n\r";
-	cout << transfer.receiveMessage();
-
 	// Set current directory
 	if( ! _getcwd(directory, sizeof(directory)) ) {
 		
@@ -38,7 +35,7 @@ void Terminal::run() {
 
 		// Process input
 		if( ! process(input) ) {
-			cout << "input not understood!  type 'help' for instructions :) \n\r";
+			//cout << "input not understood!  type 'help' for instructions :) \n\r";
 		}
 		
 		cout << "\n\r";
@@ -64,6 +61,9 @@ bool Terminal::process(const char * input) {
 
 	// If the user wants to list remote resources
 	else if(strcmp(input, "list_remote") == 0) {listRemote(); }
+
+	// If the user wants to send a file
+	else if(strcmp(input, "put") == 0) {putFile(); }
 
 	// If the input is not understood
 	else return false;
@@ -147,28 +147,71 @@ void Terminal::showHelp() {
  */
 void Terminal::listRemote() {
 
-	cout << "Files on remote server: \n\r";
-
 	// Send the list command to the server
 	transfer.sendMessage("list");
 
-	// Receive input
-	while(true) {
+	// Receive file list
+	char response[128];
+	strcpy(response, transfer.receiveMessage());
 
-		// Get the input
-		cout << "received message \n\r\n\r";
-
-		char message[128];
-		strcpy(message, transfer.receiveMessage());
-
-		// Check if the message is done
-		if(strcmp(message, "done") == 0) {
-			
-			break;
-		}
-
-		// Print the file name
-		cout << "- " << message;
-		cout << "\n\r";
+	// Check if the file list is empty
+	if(strcmp(&response[0], ";") == 0) {
+		cout << "No files on server";
 	}
+
+	// If there are files
+	else {
+
+		cout << "Files on remote server: \n\r";
+		
+		// Convert the response to a string
+		stringstream ss;
+		string fileString;
+		ss << response;
+		ss >> fileString;
+
+		// Find any occurrences of ; and extract the string
+		string delimiter = ";";
+		size_t pos = 0;
+		string token;
+		while((pos = fileString.find(delimiter)) != string::npos) {
+			token = fileString.substr(0, pos);
+			cout << "- " << token << "\n\r";
+			fileString.erase(0, pos + 1);
+		}
+	}
+
+	cout << "\n\r";
+}
+
+/**
+ * Sends a file to the server
+ */
+void Terminal::putFile() {
+
+	// Filestream for the file
+	FILE *stream;
+
+	// Get name of file to send
+	cout << "Enter the name of the file to send:\n";
+	char fileName[128] = "";
+	cin >> fileName;
+
+	// If we can open the file
+	if((stream = fopen(fileName, "r+b")) != NULL) {
+		
+		cout << "file opened\n";
+
+		// Send the file
+		transfer.sendFile(stream);
+
+		// Close the filestream
+		fclose(stream);
+	} 
+
+	// If we couldn't open the file
+	else {
+		cout << "File could not be opened\n\n";
+	}
+
 }
