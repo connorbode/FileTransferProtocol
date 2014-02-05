@@ -21,6 +21,7 @@ public:
 	void list();
 	void put(std::string);
 	void get(std::string);
+	void deleteFile(std::string);
 
 	// variables
 	Transfer transfer;

@@ -24,6 +24,7 @@ public:
 	void putFile();
 	void getFile();
 	void deleteLocal();
+	void deleteRemote();
 
 	// variables
 	char directory[FILENAME_MAX];
