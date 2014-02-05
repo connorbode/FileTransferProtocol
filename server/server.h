@@ -20,6 +20,7 @@ public:
 	void run();
 	void list();
 	void put(std::string);
+	void get(std::string);
 
 	// variables
 	Transfer transfer;

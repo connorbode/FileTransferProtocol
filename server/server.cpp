@@ -22,6 +22,9 @@ void Server::run() {
 		Sleep(1000);
 		exit(0);
 	}
+	
+	// Set directory to files folder
+	strcat(directory, "\\files");
 
 	// Loop until close
 	while (true) {
@@ -36,9 +39,16 @@ void Server::run() {
 
 		cout << "Received message: " << messageString << "\n";
 
-		// Decode message
+		/* Decode message */
+
+		// Client wants to list remote files
 		if(strcmp(message, "list") == 0) { list(); }
+
+		// Client wants to upload a file
 		else if(messageString.substr(0, 3).compare("put") == 0) { put(messageString); }
+
+		// Client wants to download a file
+		else if(messageString.substr(0, 3).compare("get") == 0) {get(messageString); }
 	}
 }
 
@@ -56,19 +66,8 @@ void Server::list() {
 		// Iterate through the directory
 		while ((dirEntry = readdir(dir)) != NULL) {
 
-			struct stat st;
-
-			// Check if entry is a file or folder
-			stat(dirEntry->d_name, &st);
-			  
-			// If it is a folder
-			if(S_ISDIR(st.st_mode)) {
-
-				// Do nothing.
-			}
-
 			// If it is a file
-			else {
+			if( !S_ISDIR(dirEntry->d_type)) {
 
 				// Append the filename to the list
 				strcat(fileList, dirEntry->d_name);
@@ -166,4 +165,60 @@ void Server::put(string request) {
 	}
 	
 	
+}
+
+/**
+ * Deals with a get request
+ */
+void Server::get(string request) {
+
+	string filename;
+
+	// Figure out filename
+	string delimiter = ";";
+	size_t pos = 0, pos2 = 0;
+	string token, param, value;
+	while((pos = request.find(delimiter)) != string::npos) {
+		token = request.substr(0, pos);
+
+		// Ignore put 
+		if(token.compare("get") != 0) {
+
+			// Divide at :
+			pos2 = request.find(":");
+			param = request.substr(0, pos2);
+			value = request.substr(pos2+1, token.size()-pos2-1);
+
+			// If filename
+			if(param.compare("filename") == 0) {
+				filename = value;
+			}
+		}
+
+		request.erase(0, pos + 1);
+	}
+
+	cout << "GET request for \"" << filename << "\" \n";
+
+	// Open stream to file 
+	FILE* stream;
+	filename = "files\\" + filename;
+
+	// If we can open the file
+	if((stream = fopen(filename.c_str(), "rb")) != NULL) {
+		
+		cout << "file opened\n";
+
+		// Send the file
+		transfer.sendFile(stream, filename.c_str());
+
+		// Close the filestream
+		fclose(stream);
+	} 
+
+	// If we couldn't open the file
+	else {
+		transfer.sendMessage("could not open file");
+	}
+
 }

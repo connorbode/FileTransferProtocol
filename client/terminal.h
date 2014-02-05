@@ -21,6 +21,7 @@ public:
 	void showHelp();
 	void listRemote();
 	void putFile();
+	void getFile();
 
 	// variables
 	char directory[FILENAME_MAX];

@@ -22,6 +22,9 @@ void Terminal::run() {
 		exit(0);
 	}
 
+	// Set directory to files folder
+	strcat(directory, "\\files");
+
 	// Terminal ready
 	cout << "\n\r Ready.. \n\r\n\r";
 
@@ -65,6 +68,9 @@ bool Terminal::process(const char * input) {
 	// If the user wants to send a file
 	else if(strcmp(input, "put") == 0) {putFile(); }
 
+	// If the user wants to get a file
+	else if(strcmp(input, "get") == 0) {getFile(); }
+
 	// If the input is not understood
 	else return false;
 }
@@ -90,25 +96,22 @@ void Terminal::listLocal() {
 	// Print initial message
 	cout << "Files in directory \"" << directory << "\": \n\r";
 
+	int count = 0;
+
 	// Open directory
 	if ((dir = opendir(directory)) != NULL) {
 		  
 		// Iterate through the directory
 		while ((dirEntry = readdir(dir)) != NULL) {
 
-			struct stat st;
-
 			// Check if entry is a file or folder
-			stat(dirEntry->d_name, &st);
-			  
-			// If it is a folder
-			if(S_ISDIR(st.st_mode)) {
+				
+			int isDir = S_ISDIR(dirEntry->d_type);
+				
+			// If it is not a folder
+			if(!isDir) {
 
-				// Do nothing.
-			}
-
-			// If it is a file
-			else {
+				count++;
 
 				// Print the name
 				cout << "- " << dirEntry->d_name << "\n\r";
@@ -116,6 +119,8 @@ void Terminal::listLocal() {
 		}
 
 		closedir (dir);
+
+		if(count == 0) cout << "No files found \n";
 	} 
 		
 	// Failed to open directory
@@ -194,8 +199,11 @@ void Terminal::putFile() {
 
 	// Get name of file to send
 	cout << "Enter the name of the file to send:\n";
-	char fileName[128] = "";
-	cin >> fileName;
+	char fileName[128] = "files\\";
+	char inStream[128];
+	cin >> inStream;
+	strcat(fileName, inStream);
+	
 
 	// If we can open the file
 	if((stream = fopen(fileName, "rb")) != NULL) {
@@ -214,4 +222,97 @@ void Terminal::putFile() {
 		cout << "File could not be opened\n\n";
 	}
 
+}
+
+/**
+ * Gets a file from the server
+ */
+void Terminal::getFile() {
+
+	// Get name of file to get
+	cout << "Enter the name of the file to get from the server:\n";
+	char fileName[128] = "";
+	cin >> fileName;
+
+	// Send the header
+	char header[128] = "get;filename:";
+	strcat(header, fileName);
+	strcat(header, ";");
+	transfer.sendMessage(header);
+
+	// Wait for a response
+	char response[128];
+	strcpy(response, transfer.receiveMessage());
+	stringstream ss;
+	string responseString;
+	ss << response;
+	ss >> responseString;
+
+	// If failed to open file
+	if(strcmp(response, "could not open file") == 0) {
+
+		cout << "File not found \n";
+	}
+
+	// If file was found
+	else if(responseString.substr(0, 3).compare("put") == 0) {
+
+		// Decode request
+		int numPackets, lastPacketSize;
+		string filename;
+
+		// Find any occurrences of ; and extract the string
+		string delimiter = ";";
+		size_t pos = 0, pos2 = 0;
+		string token, param, value;
+		while((pos = responseString.find(delimiter)) != string::npos) {
+			token = responseString.substr(0, pos);
+
+			// Ignore put 
+			if(token.compare("put") != 0) {
+
+				// Divide at :
+				pos2 = responseString.find(":");
+				param = responseString.substr(0, pos2);
+				value = responseString.substr(pos2+1, token.size()-pos2-1);
+
+				// If numPackets
+				if(param.compare("num_packets") == 0) {
+					numPackets = atoi(value.c_str());
+					printf("Number of packets: %ld. \n", numPackets);
+				}
+
+				// If lastPacketSize
+				else if(param.compare("last_packet_size") == 0) { 
+					lastPacketSize = atoi(value.c_str());
+					printf("Last packet size: %ld. \n", lastPacketSize);
+				}
+
+				// If filename
+				else if(param.compare("filename") == 0) {
+					filename = value;
+					cout << filename << "\n";
+				}
+			}
+
+			responseString.erase(0, pos + 1);
+		}
+
+		// Establish connection to file
+		FILE *stream;
+		if((stream = fopen(filename.c_str(), "wb")) != NULL) {
+
+			// Receive file
+			transfer.receiveFile(stream, numPackets, lastPacketSize);
+
+			// Close the stream
+			fclose(stream);
+		}
+
+		// If we couldn't create file
+		else {
+
+			cout << "Couldn't create file\n\n";
+		}
+	}
 }
