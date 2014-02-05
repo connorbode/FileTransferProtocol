@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include "../transfer.h"
 #include <sstream>
+#include <stdio.h>
 
 
 class Terminal {
@@ -22,6 +23,7 @@ public:
 	void listRemote();
 	void putFile();
 	void getFile();
+	void deleteLocal();
 
 	// variables
 	char directory[FILENAME_MAX];

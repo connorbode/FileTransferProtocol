@@ -71,6 +71,9 @@ bool Terminal::process(const char * input) {
 	// If the user wants to get a file
 	else if(strcmp(input, "get") == 0) {getFile(); }
 
+	// If user wants to delete a file
+	else if(strcmp(input, "delete_local") == 0) {deleteLocal(); }
+
 	// If the input is not understood
 	else return false;
 }
@@ -314,5 +317,29 @@ void Terminal::getFile() {
 
 			cout << "Couldn't create file\n\n";
 		}
+	}
+}
+
+/**
+ * Deletes a file
+ */
+void Terminal::deleteLocal() {
+
+	// Get the name of the file to delete
+	char base[128] = "files\\";
+	char filename[128];
+	cout << "Type the name of the file to delete: \n";
+	cin >> filename;
+	strcat(base, filename);
+
+	// Attempt to delete the file
+	int result = remove(base);
+	if(result != 0) {
+		cout << "File could not be deleted. \n";
+	}
+
+	// If the file couldn't be deleted
+	else {
+		cout << "File deleted.\n";
 	}
 }
